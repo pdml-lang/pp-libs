@@ -1,0 +1,12 @@
+# Gradle project-specific cache directory
+**/.gradle
+
+# Gradle build output directory
+**/build
+
+# Directories and files starting with ---
+**/---*
+
+# Directories and files starting with NOGIT_
+**/NOGIT_*
+
