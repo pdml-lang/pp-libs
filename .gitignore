@@ -1,6 +1,9 @@
 # Gradle project-specific cache directory
 **/.gradle
 
+# IntelliJ Idea project-specific cache directory
+**/.idea
+
 # Gradle build output directory
 **/build
 
