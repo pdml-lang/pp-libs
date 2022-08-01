@@ -3,5 +3,5 @@
  * in the user manual at https://docs.gradle.org/7.4/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'PP_libraries'
-include ( 'PP_basics', 'PP_text', 'PP_datatype', 'PP_parameters', 'PP_texttable', 'PP_scripting' )
+rootProject.name = 'pp-libs'
+include ( 'pp-basics', 'pp-text', 'pp-datatype', 'pp-parameters', 'pp-commands', 'pp-texttable', 'pp-scripting' )

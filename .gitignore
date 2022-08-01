@@ -4,6 +4,9 @@
 # Gradle build output directory
 **/build
 
+# 'temp' directories
+**/temp
+
 # Directories and files starting with ---
 **/---*
 

@@ -1,0 +1,18 @@
+plugins {
+    id 'dev.pp.java-library-conventions'
+}
+
+dependencies {
+    api project(':pp-basics')
+    api project(':pp-text')
+    api project(':pp-datatype')
+    api project(':pp-parameters')
+    api project(':pp-texttable')
+
+    // Picocli
+    implementation 'info.picocli:picocli:4.6.3'
+
+    // optional; see https://picocli.info/#_annotation_processor
+    // annotationProcessor 'info.picocli:picocli-codegen:4.6.3'
+
+}
