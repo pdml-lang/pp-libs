@@ -51,7 +51,7 @@ public class SimpleLogger {
                 LogLevel level = JavaToPPLevel ( record.getLevel() );
                 boolean isErrorOrWarning = level == LogLevel.ERROR || level == LogLevel.WARNING;
 
-                return level +
+                return (level == LogLevel.ALL ? "DEBUG" : level) +
                     ":" +
                     ( isErrorOrWarning ? StringConstants.OS_NEW_LINE : " " ) +
                     record.getMessage () +
