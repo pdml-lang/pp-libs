@@ -1,11 +1,10 @@
-package dev.pp.parameters.formalParameter.list;
+package dev.pp.parameters.formalParameter;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.datatype.utils.validator.DataValidator;
 import dev.pp.datatype.utils.validator.DataValidatorException;
-import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.parameter.list.Parameters;
+import dev.pp.parameters.parameter.Parameters;
 import dev.pp.text.token.TextToken;
 
 import java.util.*;
@@ -81,6 +80,15 @@ public class FormalParameters {
         }
     }
 
+    public @Nullable FormalParameter<?> getPositionalParameterWithPosition ( int position ) {
+
+        for ( FormalParameter<?> formalParameter : list ) {
+            @Nullable Integer pos = formalParameter.getPositionalParameterIndex();
+            if ( pos != null && pos == position ) return formalParameter;
+        }
+        return null;
+    }
+
     public @Nullable String getFirstPositionalParameterNameOrNull() {
 
         FormalParameter<?> parameter = getFirstPositionalParameterOrNull();
@@ -137,6 +145,14 @@ public class FormalParameters {
             .collect ( Collectors.toList() );
 
         return result.isEmpty() ? null : result;
+    }
+
+    public int getPositionalParametersCount() {
+
+        return (int) list
+            .stream()
+            .filter ( FormalParameter::isPositionalParameter )
+            .count();
     }
 
     public @NotNull List<FormalParameter<?>> getAllSortedByPositionalIndexThenName() {

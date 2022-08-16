@@ -4,7 +4,7 @@ import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.commands.command.FormalCommand;
 import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.formalParameter.list.FormalParameters;
+import dev.pp.parameters.formalParameter.FormalParameters;
 import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 

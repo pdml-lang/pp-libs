@@ -40,6 +40,9 @@ public class FormalParameter<T> {
 
         private @Nullable Integer sortIndex;
 
+        /**
+         * The position of the parameter. 'null' means it's a named parameter. Positions start at 0 (not 1).
+         */
         private @Nullable Integer positionalParameterIndex;
 
         private @Nullable Supplier<SimpleDocumentation> documentationSupplier;

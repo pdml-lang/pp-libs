@@ -1,4 +1,4 @@
-package dev.pp.parameters.parameter.list;
+package dev.pp.parameters.parameter;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;

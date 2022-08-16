@@ -1,6 +1,5 @@
-package dev.pp.parameters.formalParameter.list;
+package dev.pp.parameters.formalParameter;
 
-import dev.pp.parameters.formalParameter.FormalParameter;
 import dev.pp.parameters.parameter.Parameter;
 import dev.pp.datatype.utils.validator.DataValidator;
 import dev.pp.datatype.utils.validator.DataValidatorException;

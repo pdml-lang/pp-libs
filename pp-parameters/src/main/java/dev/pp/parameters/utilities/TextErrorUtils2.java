@@ -3,7 +3,7 @@ package dev.pp.parameters.utilities;
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.parameter.list.Parameters;
+import dev.pp.parameters.parameter.Parameters;
 import dev.pp.text.error.TextError;
 import dev.pp.text.error.TextErrorUtils;
 

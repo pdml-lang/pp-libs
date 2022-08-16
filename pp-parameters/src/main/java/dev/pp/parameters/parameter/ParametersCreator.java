@@ -1,12 +1,11 @@
-package dev.pp.parameters.parameter.list;
+package dev.pp.parameters.parameter;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.formalParameter.list.FormalParameters;
+import dev.pp.parameters.formalParameter.FormalParameters;
 import dev.pp.parameters.textTokenParameter.TextTokenParameter;
 import dev.pp.parameters.textTokenParameter.TextTokenParameters;
-import dev.pp.text.error.TextError;
 import dev.pp.text.error.TextErrorException;
 import dev.pp.text.error.handler.TextErrorHandler;
 import dev.pp.text.token.TextToken;

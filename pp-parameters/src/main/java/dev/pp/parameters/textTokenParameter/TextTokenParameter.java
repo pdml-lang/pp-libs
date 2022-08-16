@@ -34,7 +34,7 @@ public class TextTokenParameter {
 
     // public @Nullable TextLocation getValueLocation() { return valueToken != null ? valueToken.getLocation() : null; }
 
-    public @Nullable TextToken getValueOrElseNameToken () {
+    public @Nullable TextToken getValueOrElseNameToken() {
 
         TextToken valueToken = getValueToken();
         if ( valueToken != null ) return valueToken;

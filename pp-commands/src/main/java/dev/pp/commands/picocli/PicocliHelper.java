@@ -3,7 +3,7 @@ package dev.pp.commands.picocli;
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.formalParameter.list.FormalParameters;
+import dev.pp.parameters.formalParameter.FormalParameters;
 import picocli.CommandLine;
 
 import java.util.HashMap;

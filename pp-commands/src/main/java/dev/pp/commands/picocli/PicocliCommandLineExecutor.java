@@ -5,7 +5,7 @@ import dev.pp.basics.annotations.Nullable;
 import dev.pp.commands.command.FormalCommand;
 import dev.pp.commands.command.FormalCommands;
 import dev.pp.commands.errors.CLIExceptionHandler;
-import dev.pp.parameters.formalParameter.list.FormalParameters;
+import dev.pp.parameters.formalParameter.FormalParameters;
 import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 import picocli.CommandLine.Model.CommandSpec;

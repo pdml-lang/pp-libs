@@ -1,4 +1,4 @@
-package dev.pp.parameters.parameter.list;
+package dev.pp.parameters.parameter;
 
 @Deprecated
 public class TypedParametersCreator {
