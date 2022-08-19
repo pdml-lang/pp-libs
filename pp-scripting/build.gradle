@@ -5,7 +5,8 @@ plugins {
 dependencies {
     api project(':pp-basics')
 
-    implementation group: 'org.graalvm.js', name: 'js', version: '22.1.0'
+    testCompileOnly group: 'org.graalvm.js', name: 'js', version: '22.2.0'
+    implementation group: 'org.graalvm.js', name: 'js', version: '22.2.0'
     
     // Not needed
     // implementation group: 'org.graalvm.truffle', name: 'truffle-api', version: '22.1.0'

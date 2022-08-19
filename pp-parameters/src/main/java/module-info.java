@@ -9,4 +9,5 @@ module dev.pp.parameters {
     exports dev.pp.parameters.textTokenParameter;
     exports dev.pp.parameters.utilities;
     exports dev.pp.parameters.cli;
+    exports dev.pp.parameters.cli.token;
 }
