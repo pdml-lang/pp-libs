@@ -19,7 +19,24 @@ public class TextLines {
 
     public static @NotNull List<String> textToLines ( @NotNull String text ) {
 
-        return text.lines().collect ( Collectors.toList() );
+        // return text.lines().collect ( Collectors.toList() );
+
+        // Javadoc String.lines():
+        // "This definition of line implies that an empty string has zero lines and that
+        // there is no empty line following a line terminator at the end of a string."
+        // That's not what we want.
+
+        // An empty string is a single line with an empty string (as in a text editor)
+        if ( text.isEmpty() ) return List.of ( "" );
+
+        List<String> result = text.lines().collect ( Collectors.toList() );
+
+        // If text ends with a new line then add an empty line
+        if ( text.charAt ( text.length() -1 ) == '\n' ) {
+            result.add ( "" );
+        }
+
+        return result;
     }
 
     public static @NotNull String linesToText ( @NotNull List<String> lines, @NotNull String lineSeparator ) {
@@ -120,23 +137,22 @@ public class TextLines {
 
         assert n >= 1 : "n = " + n + " is invalid because n must be >= 1";
 
-        String result = null;
         String currentLine;
         int currentLineNumber = 1;
 
+        // Note: readLine() does not distinguish between "line" and "line\n"
+        // Only one line is read
+
         while ( (currentLine = reader.readLine()) != null ) { // empty string for empty line
             if ( currentLineNumber == n ) {
-                result = currentLine;
-                break;
+                return currentLine;
             }
             currentLineNumber ++;
         }
 
-        assert result != null :
-            "n = " + n + " is invalid because n must be <= number of lines in file (" + currentLineNumber + ").";
+        // readLine() returns 'null' when the last line is empty
+        if ( currentLineNumber == n ) return "";
 
-        // if ( result == null && n == currentLineNumber + 1 ) result = currentLine;
-
-        return result;
+        throw new IllegalArgumentException ( "n = " + n + " is invalid because n must be <= number of lines in file (" + currentLineNumber + ")." );
     }
 }

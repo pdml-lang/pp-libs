@@ -1,7 +1,6 @@
 package dev.pp.text.utilities.text;
 
 import dev.pp.basics.utilities.string.StringConstants;
-import dev.pp.text.utilities.text.TextMarker;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +30,9 @@ class TextMarkerTest {
 
         assertEquals ( "   ^", TextMarker.createMarkerLineForTextLine ( "123", 3, '^', 1 ) );
         assertEquals ( "   ^", TextMarker.createMarkerLineForTextLine ( "123", 3, '^', 3 ) );
+
+        assertEquals ( "^", TextMarker.createMarkerLineForTextLine ( "", 0, '^', 1 ) );
+
         assertThrows ( AssertionError.class, () -> TextMarker.createMarkerLineForTextLine ( "123", 4, '^', 2 ) );
     }
 
@@ -45,9 +47,16 @@ class TextMarkerTest {
     @Test
     public void testBreakSingleTextLineAndInsertMarkerLine() {
 
+        // empty line
+
+        String expected = "" + StringConstants.OS_NEW_LINE +
+                          "^";
+        assertEquals ( expected, TextMarker.breakSingleTextLineAndInsertMarkerLine (
+            "", 0, '^', 1, false, null ) );
+
         // single line
 
-        String expected = "012345" + StringConstants.OS_NEW_LINE +
+        expected = "012345" + StringConstants.OS_NEW_LINE +
                           "  ^^^";
         assertEquals ( expected, TextMarker.breakSingleTextLineAndInsertMarkerLine (
             "012345", 2, '^', 3, false, null ) );

@@ -2,7 +2,6 @@ package dev.pp.texttable.writer.pretty.utilities;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.DebugUtils;
 import dev.pp.basics.utilities.os.OSIO;
 import dev.pp.text.error.TextError;
 import dev.pp.text.error.handler.Log_TextErrorHandler;
@@ -94,6 +93,7 @@ public class TextErrorOrWarning_FormWriter {
             @Nullable String code  = error.getTextLine();
             if ( code != null ) {
                 int markerLength = error.getToken() == null ? 1 : error.getToken().getText().length();
+
                 code = TextMarker.breakSingleTextLineAndInsertMarkerLine (
                     code, (int) location.getColumnNumber() - 1, TextMarker.DEFAULT_MARKER_IN_MARKER_LINE,
                     markerLength, true, 105 );
