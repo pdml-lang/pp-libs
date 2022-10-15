@@ -10,25 +10,16 @@ import java.nio.file.Path;
 
 public class DirectoryCreator {
 
-    public static void createIfNotExists (
-        @NotNull Path directory ) throws IOException {
+    public static void create ( @NotNull Path directory ) throws IOException {
 
         Files.createDirectory ( directory );
     }
 
-    public static void createWithParentsIfNotExists (
-        @NotNull Path directory ) throws IOException {
+    public static void createIfNotExists ( @NotNull Path directory ) throws IOException {
 
-        Files.createDirectories ( directory );
-    }
-
-    public static void create (
-        @NotNull Path directory ) throws IOException {
-
-        if ( directory.toFile().exists() )
-            throw new FileAlreadyExistsException ( directory.toFile ().getAbsolutePath() + " exists already" );
-
-        Files.createDirectory ( directory );
+        if ( ! Files.exists ( directory ) ) {
+            Files.createDirectory ( directory );
+        }
     }
 
     public static void createWithParents (
@@ -36,6 +27,12 @@ public class DirectoryCreator {
 
         if ( directory.toFile().exists() )
             throw new FileAlreadyExistsException ( directory.toFile().getAbsolutePath() + " exists already" );
+
+        Files.createDirectories ( directory );
+    }
+
+    public static void createWithParentsIfNotExists (
+        @NotNull Path directory ) throws IOException {
 
         Files.createDirectories ( directory );
     }
