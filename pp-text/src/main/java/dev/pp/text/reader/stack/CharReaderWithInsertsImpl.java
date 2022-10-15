@@ -4,6 +4,7 @@ import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.basics.utilities.character.CharConsumer;
 import dev.pp.basics.utilities.character.CharPredicate;
+import dev.pp.text.reader.AbstractCharReader;
 import dev.pp.text.reader.CharReader;
 import dev.pp.text.reader.CharReaderImpl;
 import dev.pp.text.location.TextLocation;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
 import java.util.Stack;
 
 
-public class CharReaderWithInsertsImpl implements CharReaderWithInserts {
+public class CharReaderWithInsertsImpl extends AbstractCharReader implements CharReaderWithInserts {
 
 
     private final @NotNull Stack<CharReader> readers;
@@ -124,18 +125,6 @@ public class CharReaderWithInsertsImpl implements CharReaderWithInserts {
         }
     }
 
-    public @Nullable String advanceWhile ( @NotNull CharPredicate predicate ) throws IOException {
-
-        // assert checkHasChar();
-
-        StringBuilder sb = new StringBuilder();
-        if ( appendCurrentCharWhile ( predicate, sb ) ) {
-            return sb.toString();
-        } else {
-            return null;
-        }
-    }
-
 
     // location
 
@@ -158,189 +147,12 @@ public class CharReaderWithInsertsImpl implements CharReaderWithInserts {
     public int currentColumnNumber () { return currentReader.currentColumnNumber(); }
 
 
-    // consume
-
-    public void consumeCurrentCharAndAdvance ( @NotNull CharConsumer consumer ) throws IOException {
-
-        // assert checkHasChar();
-
-        consumer.consume ( currentChar() );
-        advance();
-    }
-
-    public boolean consumeCurrentCharIfAndAdvance ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException {
-
-        // assert checkHasChar();
-
-        if ( ! predicate.accept ( currentChar() ) ) return false;
-        consumeCurrentCharAndAdvance ( consumer );
-        return true;
-    }
-
-    public boolean consumeCurrentCharWhile ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer )
-        throws IOException {
-
-        // assert checkHasChar();
-
-        boolean charFound = false;
-        while ( hasChar() ) {
-            if ( ! predicate.accept ( currentChar() ) ) return charFound;
-            consumer.consume ( currentChar() );
-            charFound = true;
-            advance();
-        }
-        return charFound;
-    }
-
-    public boolean consumeRemaining ( @NotNull CharConsumer consumer ) throws IOException {
-
-        boolean charFound = hasChar();
-        while ( hasChar() ) {
-            consumer.consume ( currentChar() );
-            advance();
-        }
-        return charFound;
-    }
-
-
-    // append
-
-    public void appendCurrentCharAndAdvance ( @NotNull StringBuilder sb ) throws IOException {
-
-        // assert checkHasChar();
-
-        sb.append ( currentChar() );
-        advance();
-    }
-
-    public boolean appendCurrentCharIfAndAdvance ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb )
-        throws IOException {
-
-        return consumeCurrentCharIfAndAdvance ( predicate, sb::append );
-    }
-
-    public boolean appendCurrentCharWhile ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb )
-        throws IOException {
-
-        // assert checkHasChar();
-
-        return consumeCurrentCharWhile ( predicate, sb::append );
-    }
-
-    public boolean appendRemaining ( @NotNull StringBuilder sb ) throws IOException {
-
-        return consumeRemaining ( sb::append );
-    }
-
-
-    // read
-
-    public @Nullable String readWhile ( @NotNull CharPredicate predicate ) throws IOException {
-
-        StringBuilder sb = new StringBuilder();
-        appendCurrentCharWhile ( predicate, sb );
-        return sb.length() == 0 ? null : sb.toString();
-    }
-
-    public @Nullable String readWhileAtChar ( char c ) throws IOException {
-
-        return readWhile ( currentChar -> currentChar == c );
-    }
-
-    public @Nullable String readMaxNChars ( long n ) throws IOException {
-
-        StringBuilder sb = new StringBuilder();
-        for ( long i = 1; i <= n; i++ ) {
-            if ( ! hasChar() ) break;
-            appendCurrentCharAndAdvance ( sb );
-        }
-        return sb.length() == 0 ? null : sb.toString();
-    }
-
-    public @Nullable String readRemaining() throws IOException {
-
-        StringBuilder sb = new StringBuilder();
-        appendRemaining ( sb );
-        return sb.length() == 0 ? null : sb.toString();
-    }
-
-
     // isAt
-
-    public boolean isAt ( @NotNull CharPredicate predicate ) {
-
-        // assert checkHasChar();
-
-        return predicate.accept ( currentChar() );
-    }
-
-    public boolean isAtChar ( char c ) {
-
-        // assert checkHasChar();
-
-        return currentChar() == c;
-    }
 
     // TODO does not work if part of the end of the string is on stacked reader
     // can be fixed after 'mark' functions are fixed (see comment below)
     public boolean isAtString ( @NotNull String s ) throws IOException { return currentReader.isAtString ( s ); }
 
-
-    // skip
-
-    public boolean skipIf ( @NotNull CharPredicate predicate ) throws IOException {
-
-        // assert checkHasChar();
-
-        return consumeCurrentCharIfAndAdvance ( predicate, c -> {} );
-    }
-
-    public boolean skipChar ( char c ) throws IOException {
-
-        // assert checkHasChar();
-
-        if ( currentChar() == c ) {
-            advance();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean skipString ( @NotNull String string ) throws IOException {
-
-        // assert checkHasChar();
-
-        if ( isAtString ( string ) ) {
-            skipNChars ( string.length() );
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean skipWhile ( @NotNull CharPredicate predicate ) throws IOException {
-
-        // assert checkHasChar();
-
-        return consumeCurrentCharWhile ( predicate, c -> {} );
-    }
-
-    public void skipNChars ( long n ) throws IOException {
-
-        // assert checkHasChar();
-
-        if ( n < 0 ) throw new IllegalArgumentException ( "n cannot be < 0, but is " + n + "." );
-
-        for ( long i = 1; i <= n; i++ ) {
-            if ( hasChar() ) {
-                advance();
-            } else {
-                throw new IllegalArgumentException (
-                    "Cannot skip " + n + " characters, because the end of input has been reached after " + i + " skips."  );
-            }
-        }
-    }
 
 
     /*
@@ -402,12 +214,5 @@ public class CharReaderWithInsertsImpl implements CharReaderWithInserts {
         sb.append ( currentReader.stateToString() );
 
         return sb.toString();
-    }
-
-    public void stateToOSOut ( @Nullable String label ) {
-
-        System.out.println();
-        if ( label != null ) System.out.println ( label );
-        System.out.println ( stateToString() );
     }
 }

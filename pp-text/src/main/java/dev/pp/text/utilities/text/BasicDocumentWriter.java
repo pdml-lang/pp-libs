@@ -7,7 +7,7 @@ import dev.pp.basics.utilities.string.StringConstants;
 import java.io.IOException;
 import java.io.Writer;
 
-public abstract class BasicDocumentWriter {
+public abstract class BasicDocumentWriter implements AutoCloseable {
 
 
     protected final @NotNull Writer writer;

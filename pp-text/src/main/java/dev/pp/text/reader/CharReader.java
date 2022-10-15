@@ -32,9 +32,11 @@ public interface CharReader {
     int currentColumnNumber ();
 
     // consume
-    void consumeCurrentCharAndAdvance ( @NotNull CharConsumer consumer ) throws IOException;
-    boolean consumeCurrentCharIfAndAdvance ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException;
-    boolean consumeCurrentCharWhile ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException;
+    void consumeCurrentChar ( @NotNull CharConsumer consumer ) throws IOException;
+    boolean consumeCurrentCharIf ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException;
+    boolean consumeWhile ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException;
+    boolean consumeWhileNotAtCharOrEnd ( char ch, @NotNull CharConsumer consumer ) throws IOException;
+    boolean consumeWhileNotAtStringOrEnd ( @NotNull String string, @NotNull CharConsumer consumer ) throws IOException;
     boolean consumeRemaining ( @NotNull CharConsumer consumer ) throws IOException;
     // boolean consumeIfHasNext ( @NotNull CharConsumer consumer ) throws IOException;
     // void consumeUntil ( @NotNull CharPredicate predicate, @NotNull CharConsumer consumer ) throws IOException;
@@ -45,7 +47,9 @@ public interface CharReader {
     // append
     void appendCurrentCharAndAdvance ( @NotNull StringBuilder sb ) throws IOException;
     boolean appendCurrentCharIfAndAdvance ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb ) throws IOException;
-    boolean appendCurrentCharWhile ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb ) throws IOException;
+    boolean appendWhile ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb ) throws IOException;
+    boolean appendWhileNotAtCharOrEnd ( char ch, @NotNull StringBuilder sb ) throws IOException;
+    boolean appendWhileNotAtStringOrEnd ( @NotNull String string, @NotNull StringBuilder sb ) throws IOException;
     boolean appendRemaining ( @NotNull StringBuilder sb ) throws IOException;
     // boolean appendIfHasNext ( @NotNull StringBuilder sb ) throws IOException;
     // boolean appendNextIf ( @NotNull CharPredicate predicate, @NotNull StringBuilder sb ) throws IOException;
@@ -54,6 +58,8 @@ public interface CharReader {
     @Nullable String readWhile ( @NotNull CharPredicate predicate ) throws IOException;
     @Nullable String readWhileAtChar ( char c ) throws IOException;
     // @Nullable String readNChars ( long n ) throws IOException;
+    @Nullable String readWhileNotAtCharOrEnd ( char ch ) throws IOException;
+    @Nullable String readWhileNotAtStringOrEnd ( @NotNull String string ) throws IOException;
     @Nullable String readMaxNChars ( long n ) throws IOException;
     @Nullable String readRemaining() throws IOException;
 

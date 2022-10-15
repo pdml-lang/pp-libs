@@ -217,6 +217,38 @@ public class CharReaderTest {
     }
 
 
+    // read
+
+    @Test
+    public void testReadFunctions() throws IOException {
+        testReadFunctions_ ( CharReaderTest::getDefaultReader );
+    }
+
+    public static void testReadFunctions_ ( Function<String, CharReader> readerGetter ) throws IOException {
+
+        CharReader r = readerGetter.apply ( "12345" );
+
+        assertNull ( r.readWhileNotAtCharOrEnd ( '1' ) );
+        assertEquals ( "12", r.readWhileNotAtCharOrEnd ( '3' ) );
+        assertNull ( r.readWhileNotAtCharOrEnd ( '3' ) );
+        assertEquals ( "3", r.readWhileNotAtCharOrEnd ( '4' ) );
+        assertEquals ( "45", r.readWhileNotAtCharOrEnd ( '6' ) );
+        assertNull ( r.readWhileNotAtCharOrEnd ( '3' ) );
+
+        r = readerGetter.apply ( "12345" );
+
+        assertNull ( r.readWhileNotAtStringOrEnd ( "1" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "123" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "12345" ) );
+        assertEquals ( "12", r.readWhileNotAtStringOrEnd ( "34" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "3" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "34" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "345" ) );
+        assertEquals ( "3", r.readWhileNotAtStringOrEnd ( "4" ) );
+        assertEquals ( "45", r.readWhileNotAtStringOrEnd ( "6" ) );
+        assertNull ( r.readWhileNotAtStringOrEnd ( "3" ) );
+    }
+
     // isAt
 
     @Test

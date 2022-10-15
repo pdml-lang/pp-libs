@@ -240,6 +240,11 @@ public class CharReaderWithInsertsTest {
     }
 
     @Test
+    public void testReadFunctions() throws IOException {
+        CharReaderTest.testReadFunctions_ ( CharReaderWithInsertsTest::getDefaultReader );
+    }
+
+    @Test
     public void testisAtFunctions() throws IOException {
         CharReaderTest.testisAtFunctions_ ( CharReaderWithInsertsTest::getDefaultReader );
     }
