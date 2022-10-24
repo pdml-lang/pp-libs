@@ -165,9 +165,9 @@ public class TextTokenParameters {
     public @Nullable TextToken getStartToken() { return startToken; }
 
 
-    public @NotNull Collection<TextTokenParameter> getList() { return map.values(); }
+    public @NotNull List<TextTokenParameter> getList() { return List.copyOf ( map.values() ); }
 
-    public @NotNull Set<String> getNames() { return map.keySet(); }
+    public @NotNull Set<String> getNames() { return Set.copyOf ( map.keySet() ); }
 
     public boolean isEmpty() { return map.isEmpty(); }
 
@@ -272,6 +272,13 @@ public class TextTokenParameters {
             map.put ( p.getName(), p.getValue() );
         });
         return map.isEmpty() ? null : map;
+    }
+
+    public @NotNull TextTokenParameters createCopy() {
+
+        TextTokenParameters copy = new TextTokenParameters ( startToken );
+        getList().forEach ( copy::add );
+        return copy;
     }
 
     public @NotNull String toString() {
