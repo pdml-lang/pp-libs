@@ -1,9 +1,9 @@
 package dev.pp.datatype.union;
 
 import dev.pp.datatype.CommonDataTypes;
-import dev.pp.datatype.nonUnion.scalar.impls.Boolean.BooleanDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.Null.NullDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.string.StringDataType;
+import dev.pp.datatype.nonunion.scalar.impls.Boolean.BooleanDataType;
+import dev.pp.datatype.nonunion.scalar.impls.Null.NullDataType;
+import dev.pp.datatype.nonunion.scalar.impls.string.StringDataType;
 import dev.pp.datatype.utils.parser.DataParserException;
 import dev.pp.datatype.utils.validator.DataValidatorException;
 import dev.pp.text.documentation.SimpleDocumentation;

@@ -24,7 +24,8 @@ public interface TextResource {
 
     @NotNull String getName();
 
-    @NotNull String getTextLine ( long lineNumber ) throws Exception;
+    @Nullable String getTextLine ( long lineNumber ) throws Exception;
+
 
     /*
     default @Nullable String getTextLineOrNull ( long lineNumber ) {

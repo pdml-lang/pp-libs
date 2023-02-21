@@ -27,6 +27,13 @@ public class TextToken {
 
     public TextToken ( @NotNull String text ) { this ( text, null ); }
 
+    // null string
+    public TextToken ( @Nullable TextLocation location ) { this ( "", location ); }
+
+    public static @NotNull TextToken createForNullable ( @Nullable String string, @Nullable TextLocation location ) {
+        return string == null ? new TextToken ( location ) : new TextToken ( string, location );
+    }
+
 
     public boolean isNullText() { return text.isEmpty(); }
 

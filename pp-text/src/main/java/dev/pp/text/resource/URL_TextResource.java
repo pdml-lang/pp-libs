@@ -14,7 +14,6 @@ public class URL_TextResource implements TextResource {
 
 
     public URL_TextResource ( @NotNull URL URL ) {
-
         this.URL = URL;
     }
 
@@ -24,7 +23,6 @@ public class URL_TextResource implements TextResource {
     public @NotNull String getName() { return URL.toString(); }
 
     public @NotNull String getTextLine ( long lineNumber ) throws IOException {
-
         return URLUtils.getNthLineInURL ( URL, lineNumber );
     }
 

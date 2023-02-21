@@ -1,3 +1,3 @@
 # pp-parameters
 
-This package is used to work with formal and concrete parameters.
+This package is used to work with concrete parameters and parameter specifications.

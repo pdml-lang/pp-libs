@@ -2,7 +2,6 @@ package dev.pp.basics.utilities.file;
 
 import dev.pp.basics.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -10,12 +9,12 @@ public class FilePathUtils {
 
     public static @NotNull Path makeAbsolute (
         @NotNull Path filePath,
-        @NotNull Path rootDirectoryForRelativeFilePath ) {
+        @NotNull Path rootDirectoryForRelativePath ) {
 
         if ( filePath.isAbsolute() ) {
             return filePath;
         } else {
-            return rootDirectoryForRelativeFilePath.resolve ( filePath );
+            return rootDirectoryForRelativePath.resolve ( filePath );
         }
     }
 
@@ -71,6 +70,7 @@ public class FilePathUtils {
 
  */
 
+/*
     @Deprecated
     public static String getAbsoluteOSPath ( File file ) {
 
@@ -80,4 +80,5 @@ public class FilePathUtils {
             return file.getAbsolutePath();
         }
     }
+ */
 }

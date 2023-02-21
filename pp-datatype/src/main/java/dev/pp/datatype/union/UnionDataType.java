@@ -2,11 +2,10 @@ package dev.pp.datatype.union;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.datatype.DataType;
-import dev.pp.datatype.nonUnion.NonUnionDataType;
+import dev.pp.datatype.nonunion.NonUnionDataType;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public interface UnionDataType<T> extends DataType<T> {
 

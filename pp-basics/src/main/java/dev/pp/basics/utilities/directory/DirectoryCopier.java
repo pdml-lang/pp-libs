@@ -2,7 +2,6 @@ package dev.pp.basics.utilities.directory;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.DebugUtils;
 import dev.pp.basics.utilities.file.FileCopier;
 
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DirectoryCopier {
 
@@ -23,6 +23,7 @@ public class DirectoryCopier {
     public static void copyDirectoryContent (
         @NotNull Path sourceDirectory,
         @NotNull Path targetDirectory,
+        @Nullable Predicate<Path> includedFileFilter,
         @Nullable CopyOption... options ) throws IOException {
 
         DirectoryContentUtils.forEachDirectoryOrFileInTree (
@@ -33,9 +34,11 @@ public class DirectoryCopier {
                 DirectoryCreator.createWithParentsIfNotExists ( targetChildDirectory );
             },
             sourceFile -> {
-                Path relativeFilePath = sourceDirectory.relativize ( sourceFile );
-                Path targetFile = Path.of ( targetDirectory.toString(), relativeFilePath.toString() );
-                FileCopier.copyFile ( sourceFile, targetFile, options );
+                if ( includedFileFilter == null || includedFileFilter.test ( sourceFile ) ) {
+                    Path relativeFilePath = sourceDirectory.relativize ( sourceFile );
+                    Path targetFile = Path.of ( targetDirectory.toString (), relativeFilePath.toString () );
+                    FileCopier.copyFile ( sourceFile, targetFile, options );
+                }
             } );
     }
 
@@ -46,7 +49,7 @@ public class DirectoryCopier {
 
         for ( Path directoryOrFile : directoriesAndFiles ) {
             if ( Files.isDirectory ( directoryOrFile ) ) {
-                copyDirectoryContent ( directoryOrFile, targetDirectory, options );
+                copyDirectoryContent ( directoryOrFile, targetDirectory, null, options );
             } else {
                 FileCopier.copyFileToExistingDirectory ( directoryOrFile, targetDirectory, options );
             }

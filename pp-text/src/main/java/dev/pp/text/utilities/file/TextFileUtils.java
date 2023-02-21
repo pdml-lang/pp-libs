@@ -3,7 +3,7 @@ package dev.pp.text.utilities.file;
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.basics.utilities.file.FileCheckUtils;
-import dev.pp.text.error.TextErrorException;
+import dev.pp.text.inspection.TextErrorException;
 import dev.pp.text.token.TextToken;
 import dev.pp.text.utilities.text.TextLines;
 
@@ -27,8 +27,8 @@ public class TextFileUtils {
             FileCheckUtils.checkIsExistingFile ( filePath );
         } catch ( FileNotFoundException e ) {
             throw new TextErrorException (
-                "FILE_DOES_NOT_EXIST",
                 e.getMessage(),
+                "FILE_DOES_NOT_EXIST",
                 textToken );
         }
     }

@@ -8,6 +8,7 @@ module dev.pp.commands {
 
     requires info.picocli;
 
+    exports dev.pp.commands.cli;
     exports dev.pp.commands.command;
     exports dev.pp.commands.errors;
     exports dev.pp.commands.picocli;

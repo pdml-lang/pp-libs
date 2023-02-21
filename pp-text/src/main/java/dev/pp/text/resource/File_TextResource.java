@@ -1,6 +1,5 @@
 package dev.pp.text.resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -15,7 +14,6 @@ public class File_TextResource implements TextResource {
 
 
     public File_TextResource ( @NotNull Path filePath ) {
-
         this.filePath = filePath;
     }
 
@@ -25,10 +23,9 @@ public class File_TextResource implements TextResource {
     public @NotNull String getName() { return FilePathUtils.makeAbsoluteAndNormalize ( filePath ).toString(); }
 
     public @NotNull String getTextLine ( long lineNumber ) throws IOException {
-
         return TextFileUtils.getNthLineInFile ( filePath, lineNumber );
     }
 
     @Override
-    public String toString() { return "File: " + FilePathUtils.makeAbsoluteAndNormalize ( filePath ); }
+    public String toString() { return "file " + getName(); }
 }

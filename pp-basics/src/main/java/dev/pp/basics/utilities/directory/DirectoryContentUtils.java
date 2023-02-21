@@ -6,6 +6,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
@@ -20,6 +21,8 @@ public class DirectoryContentUtils {
         @NotNull Path rootDirectory,
         @Nullable PathConsumer directoryConsumer,
         @Nullable PathConsumer fileConsumer ) throws IOException {
+
+        DirectoryCheckUtils.checkIsExistingDirectory ( rootDirectory );
 
         Files.walkFileTree ( rootDirectory, EnumSet.of ( FileVisitOption.FOLLOW_LINKS ), Integer.MAX_VALUE,
             new SimpleFileVisitor<> () {
@@ -69,6 +72,19 @@ public class DirectoryContentUtils {
 
         List<Path> files = new ArrayList<>();
         forEachFileInTree ( rootDirectory, files::add );
+        return files.isEmpty() ? null : files;
+    }
+
+    public static @Nullable List<Path> filesInTree (
+        @NotNull Path rootDirectory,
+        @NotNull Predicate<Path> filePredicate ) throws IOException {
+
+        List<Path> files = new ArrayList<>();
+        forEachFileInTree ( rootDirectory, path -> {
+            if ( filePredicate.test ( path ) ) {
+                files.add ( path );
+            }
+        });
         return files.isEmpty() ? null : files;
     }
 

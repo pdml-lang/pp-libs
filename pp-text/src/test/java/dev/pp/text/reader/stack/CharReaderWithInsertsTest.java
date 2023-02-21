@@ -1,15 +1,28 @@
 package dev.pp.text.reader.stack;
 
+import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.utilities.character.CharChecks;
 import dev.pp.text.reader.CharReaderTest;
+import dev.pp.text.resource.String_TextResource;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharReaderWithInsertsTest {
+
+    private static CharReaderWithInsertsImpl createReader ( @NotNull String string ) {
+
+        try {
+            return CharReaderWithInsertsImpl.createAndAdvance ( new StringReader ( string ), new String_TextResource ( string ), null, null );
+        } catch ( IOException e ) {
+            throw new RuntimeException ( e );
+        }
+    }
+
 
     @Test
     public void testStack() throws IOException {
@@ -76,7 +89,7 @@ public class CharReaderWithInsertsTest {
 */
         // test 1
 
-        CharReaderWithInsertsImpl i = new CharReaderWithInsertsImpl ( "12" );
+        CharReaderWithInsertsImpl i = createReader ( "12" );
         i.insert ( "34" );
         i.insert ( "56" );
 
@@ -110,10 +123,10 @@ public class CharReaderWithInsertsTest {
         assertFalse ( i.hasChar () );
 
         // must be commented if assertions are disabled
-        assertThrows ( NoSuchElementException.class, i::advance );
+        // assertThrows ( NoSuchElementException.class, i::advance );
 
         // test 2
-        i = new CharReaderWithInsertsImpl ( "1" );
+        i = createReader ( "1" );
         i.insert ( "2" );
         i.insert ( "" );
         i.insert ( "3" );
@@ -127,11 +140,11 @@ public class CharReaderWithInsertsTest {
         assertFalse ( i.hasChar () );
 
         // must be commented if assertions are disabled
-        assertThrows ( NoSuchElementException.class, i::advance );
+        // assertThrows ( NoSuchElementException.class, i::advance );
 
         // test 3
 
-        i = new CharReaderWithInsertsImpl ( "123" );
+        i = createReader ( "123" );
         assertEquals ( '1', i.currentChar() );
         i.advance();
         i.advance();
@@ -148,13 +161,13 @@ public class CharReaderWithInsertsTest {
 
         // test 4
 
-        i = new CharReaderWithInsertsImpl ( "  \r\n" );
+        i = createReader ( "  \r\n" );
         i.skipWhile ( CharChecks::isSpaceOrTabOrNewLine );
         assertFalse ( i.hasChar () );
 
         // test 5
 
-        i = new CharReaderWithInsertsImpl ( "123" );
+        i = createReader ( "123" );
         assertEquals ( '1', i.currentChar() );
         i.advance();
         assertEquals ( '2', i.currentChar() );
@@ -172,7 +185,7 @@ public class CharReaderWithInsertsTest {
         assertFalse ( i.hasChar () );
 
         // test 6
-        i = new CharReaderWithInsertsImpl ( "ac" );
+        i = createReader ( "ac" );
         i.advance();
         assertEquals ( 'c', i.currentChar() );
         i.insert ( "b" );
@@ -226,7 +239,7 @@ public class CharReaderWithInsertsTest {
 
     private static CharReaderWithInserts getDefaultReader ( String s ) {
 
-        return new CharReaderWithInsertsImpl ( s );
+        return createReader ( s );
     }
 
     @Test

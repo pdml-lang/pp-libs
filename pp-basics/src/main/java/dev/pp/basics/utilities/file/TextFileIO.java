@@ -28,16 +28,8 @@ public class TextFileIO {
         }
     }
 
-    @Deprecated
-    public static @NotNull FileReader getUTF8FileReader ( @NotNull File file ) throws IOException {
-
-        // FileCheckUtils.checkIsExistingFile ( file );
-        return new FileReader ( file, StandardCharsets.UTF_8 );
-    }
-
     public static @NotNull FileWriter getUTF8FileWriter ( @NotNull Path filePath ) throws IOException {
 
-        // FileCheckUtils.checkIsNotDirectory ( file );
         return new FileWriter ( filePath.toFile(), StandardCharsets.UTF_8 );
     }
 
@@ -56,21 +48,8 @@ public class TextFileIO {
         }
     }
 
-    @Deprecated
-    public static @NotNull FileWriter getUTF8FileWriter ( @NotNull File file ) throws IOException {
-
-        // FileCheckUtils.checkIsNotDirectory ( file );
-        return new FileWriter ( file, StandardCharsets.UTF_8 );
-    }
-
 
     // read
-
-    @Deprecated
-    public static @Nullable String readTextFromUTF8File ( @NotNull File file ) throws IOException {
-
-        return readTextFromUTF8File ( file.toPath() );
-    }
 
     public static @Nullable String readTextFromUTF8File ( @NotNull Path filePath ) throws IOException {
 
@@ -86,12 +65,6 @@ public class TextFileIO {
 
 
     // write
-
-    @Deprecated
-    public static void writeTextToUTF8File ( @NotNull String text, @NotNull File file ) throws IOException {
-
-        writeTextToUTF8File ( text, file.toPath() );
-    }
 
     public static void writeTextToUTF8File ( @NotNull String text, @NotNull Path filePath ) throws IOException {
 

@@ -7,7 +7,7 @@ import dev.pp.basics.utilities.string.StringConstants;
 import java.io.IOException;
 import java.io.Writer;
 
-public abstract class BasicDocumentWriter implements AutoCloseable {
+public abstract class BasicDocumentWriter {
 
 
     protected final @NotNull Writer writer;
@@ -58,10 +58,6 @@ public abstract class BasicDocumentWriter implements AutoCloseable {
     public BasicDocumentWriter flush() throws IOException {
         writer.flush();
         return this;
-    }
-
-    public void close() throws IOException {
-        writer.close();
     }
 
 

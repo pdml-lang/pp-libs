@@ -4,6 +4,7 @@ import dev.pp.basics.utilities.character.CharChecks;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
@@ -14,8 +15,15 @@ public class CharReaderTest {
 
     private static CharReader getDefaultReader ( String s ) {
 
-        return CharReaderImpl.createForString ( s );
+        // return CharReaderImpl.createForString ( s );
+        try {
+            return CharReaderImpl.createAndAdvance ( new StringReader ( s ), null, null, null );
+        } catch ( IOException e ) {
+            // should never happen
+            throw new RuntimeException ( e );
+        }
     }
+
 
     // iteration
 
@@ -24,9 +32,9 @@ public class CharReaderTest {
         testIteration_ ( CharReaderTest::getDefaultReader );
     }
 
-    public static void testIteration_ ( Function<String, CharReader> iteratorGetter ) throws IOException {
+    public static void testIteration_ ( Function<String, CharReader> readerGetter ) throws IOException {
 
-        CharReader r = iteratorGetter.apply ( "abc" );
+        CharReader r = readerGetter.apply ( "abc" );
 
         assertTrue ( r.hasChar () );
         assertEquals ( 'a', r.currentChar () );
@@ -56,10 +64,10 @@ public class CharReaderTest {
         assertEquals ( 4, r.currentColumnNumber () );
 
         // must be commented if assertions are disabled
-        assertThrows ( NoSuchElementException.class, r::advance );
+        // assertThrows ( NoSuchElementException.class, r::advance );
 
 
-        r = iteratorGetter.apply ( "abc" );
+        r = readerGetter.apply ( "abc" );
         StringBuilder sb = new StringBuilder();
         while ( r.hasChar () ) {
             sb.append ( r.currentChar() );
@@ -68,17 +76,17 @@ public class CharReaderTest {
         assertEquals ( "abc", sb.toString() );
 
 
-        r = iteratorGetter.apply ( "" );
+        r = readerGetter.apply ( "" );
         assertFalse ( r.hasChar () );
         assertEquals ( 1, r.currentLineNumber () );
         assertEquals ( 1, r.currentColumnNumber () );
 
         // must be commented if assertions are disabled
         // assertThrows ( NoSuchElementException.class, r::advance );
-        assertThrows ( Throwable.class, r::advance );
+        // assertThrows ( Throwable.class, r::advance );
 
 
-        r = iteratorGetter.apply ( "" );
+        r = readerGetter.apply ( "" );
         sb = new StringBuilder();
         while ( r.hasChar () ) {
             sb.append ( r.currentChar() );
@@ -247,6 +255,9 @@ public class CharReaderTest {
         assertEquals ( "3", r.readWhileNotAtStringOrEnd ( "4" ) );
         assertEquals ( "45", r.readWhileNotAtStringOrEnd ( "6" ) );
         assertNull ( r.readWhileNotAtStringOrEnd ( "3" ) );
+
+        r = readerGetter.apply ( "12[45" );
+        assertEquals ( "12[45", r.readWhileNotAtStringOrEnd ( "[[" ) );
     }
 
     // isAt

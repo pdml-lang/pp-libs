@@ -2,19 +2,17 @@ package dev.pp.datatype;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.datatype.nonUnion.scalar.impls.Null.NullDataType;
+import dev.pp.datatype.nonunion.scalar.impls.Null.NullDataType;
 import dev.pp.datatype.utils.parser.DataParserException;
 import dev.pp.datatype.utils.validator.DataValidator;
 import dev.pp.datatype.utils.validator.DataValidatorException;
 import dev.pp.text.documentation.SimpleDocumentation;
+import dev.pp.text.location.TextLocation;
 import dev.pp.text.token.TextToken;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public interface DataType<T> {
 
@@ -23,7 +21,7 @@ public interface DataType<T> {
     @Nullable SimpleDocumentation getDocumentation();
 
 
-    // validation
+    // Validation
 
     boolean isNullable();
 
@@ -53,8 +51,8 @@ public interface DataType<T> {
     default void validateNull ( @Nullable T object, @Nullable TextToken token ) throws DataValidatorException {
 
         if ( object == null && ! isNullable() ) throw new DataValidatorException (
-            "NULL_NOT_ALLOWED",
             "A value must be provided. 'null' (no value) is not allowed.",
+            "NULL_NOT_ALLOWED",
             token,
             null );
     }
@@ -76,7 +74,7 @@ public interface DataType<T> {
         return validValues == null ? null : validValues
             .stream()
             .map ( Object::toString )
-            .collect ( Collectors.toList() );
+            .toList();
     }
 
     default @Nullable List<T> validValues() { return null; }
@@ -84,20 +82,30 @@ public interface DataType<T> {
     // TODO? default @Nullable List<T> exampleValues() { return null; }
 
 
-    // parse
+    // Parse
 
-    @Nullable T parse ( @Nullable String string, @Nullable TextToken token ) throws DataParserException;
+    default @Nullable T parse ( @NotNull TextToken token ) throws DataParserException {
+        return parse ( token.getText(), token.getLocation() );
+    }
 
-    default @Nullable T parseAndValidate ( @Nullable String string, @Nullable TextToken token )
+    @Nullable T parse ( @Nullable String string, @Nullable TextLocation location ) throws DataParserException;
+
+    default @Nullable T parseAndValidate ( @NotNull TextToken token )
         throws DataParserException, DataValidatorException {
 
-        T object = parse ( string, token );
-        validate ( object, token );
+        return parseAndValidate ( token.getText(), token.getLocation() );
+    }
+
+    default @Nullable T parseAndValidate ( @Nullable String string, @Nullable TextLocation location )
+        throws DataParserException, DataValidatorException {
+
+        T object = parse ( string, location );
+        validate ( object, TextToken.createForNullable ( string, location ) );
         return object;
     }
 
 
-    // write
+    // Write
 
     default @NotNull String objectToString ( @Nullable T object ) {
         return object != null ? object.toString() : NullDataType.NULL_STRING;

@@ -5,11 +5,11 @@ import dev.pp.basics.annotations.Nullable;
 import dev.pp.parameters.cli.token.NameOrValueToken;
 import dev.pp.parameters.cli.token.NameToken;
 import dev.pp.parameters.cli.token.ValueToken;
-import dev.pp.parameters.formalParameter.FormalParameters;
-import dev.pp.parameters.parameter.Parameters;
-import dev.pp.parameters.parameter.ParametersCreator;
-import dev.pp.parameters.textTokenParameter.TextTokenParameters;
-import dev.pp.text.error.TextErrorException;
+import dev.pp.parameters.parameters.Parameters;
+import dev.pp.parameters.parameters.ParametersUtils;
+import dev.pp.parameters.parameterspecs.MutableOrImmutableParameterSpecs;
+import dev.pp.parameters.parameters.ParametersCreator;
+import dev.pp.text.inspection.TextErrorException;
 import dev.pp.text.token.TextToken;
 
 import java.util.ArrayList;
@@ -17,29 +17,35 @@ import java.util.List;
 
 public class CLIArguments {
 
-    public static @Nullable Parameters parseToParameters (
+    public static <V> @Nullable Parameters<V> parseToParameters (
         @NotNull String[] CLIStrings,
         int CLIStringsStartIndex,
         @Nullable TextToken startToken,
-        @NotNull FormalParameters formalParameters ) throws TextErrorException {
+        @Nullable MutableOrImmutableParameterSpecs<V> parameterSpecs ) throws TextErrorException {
 
-        @NotNull TextTokenParameters textTokenParameters = parseToTextTokenParameters (
-            CLIStrings, CLIStringsStartIndex, startToken, formalParameters );
+        @Nullable Parameters<String> stringParameters = parseToStringParameters (
+            CLIStrings, CLIStringsStartIndex, startToken, parameterSpecs );
 
-        return ParametersCreator.createFromTextParameters ( textTokenParameters, startToken, formalParameters );
+        return ParametersCreator.createFromStringParameters ( stringParameters, startToken, parameterSpecs );
     }
 
-    public static @NotNull TextTokenParameters parseToTextTokenParameters (
+    public static @Nullable Parameters<String> parseToStringParameters (
         @NotNull String[] CLIStrings,
         int CLIStringsStartIndex,
         @Nullable TextToken startToken,
-        @NotNull FormalParameters formalParameters ) throws TextErrorException {
+        @Nullable MutableOrImmutableParameterSpecs<?> parameterSpecs ) throws TextErrorException {
 
         @Nullable List<NameOrValueToken> nameOrValueTokens = parseToNameOrValueTokens ( CLIStrings, CLIStringsStartIndex );
-        return
-            nameOrValueTokens == null
-            ? new TextTokenParameters ( startToken )
-            : TextTokenParameters.createFromNameOrValueTokens ( nameOrValueTokens, startToken, formalParameters );
+        if ( nameOrValueTokens == null ) {
+            return null;
+        }
+        if ( parameterSpecs == null ) {
+            throw new TextErrorException (
+                "Parameters are not allowed in this context.",
+                "INVALID_PARAMETERS",
+                startToken );
+        }
+        return ParametersUtils.createFromNameOrValueTokens ( nameOrValueTokens, startToken, parameterSpecs );
     }
 
     public static @Nullable List<NameOrValueToken> parseToNameOrValueTokens (
@@ -79,8 +85,8 @@ public class CLIArguments {
                     if ( assignmentIndex == 0 ) {
                         // --=value
                         throw new TextErrorException (
-                            "INVALID_CLI_ARGUMENTS",
                             "'" + CLIString + "' is invalid. Argument name missing before '='.",
+                            "INVALID_CLI_ARGUMENTS",
                             new TextToken ( CLIString ) );
                     } else if ( assignmentIndex == unprefixedCLIString.length() - 1 ) {
                         // --name=

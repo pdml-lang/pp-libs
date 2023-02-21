@@ -2,20 +2,11 @@ package dev.pp.text.reader;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.character.CharConsumer;
 import dev.pp.basics.utilities.character.CharPredicate;
-import dev.pp.text.resource.File_TextResource;
 import dev.pp.text.resource.TextResource;
-import dev.pp.text.resource.URL_TextResource;
-import dev.pp.basics.utilities.file.TextFileIO;
-import dev.pp.basics.utilities.string.StringConstants;
 import dev.pp.text.location.TextLocation;
-import dev.pp.basics.utilities.URLUtilities;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.NoSuchElementException;
 
 public class CharReaderImpl extends AbstractCharReader implements CharReader {
 
@@ -36,63 +27,38 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
 
     // constructors
 
-    public CharReaderImpl ( @NotNull Reader reader, @Nullable TextResource resource ) throws IOException {
+    public CharReaderImpl (
+        @NotNull Reader reader,
+        @Nullable TextResource resource,
+        @Nullable Integer lineOffset,
+        @Nullable Integer columnOffset ) {
 
-        Reader readerWithMarkSupport = reader.markSupported () ? reader : new BufferedReader ( reader );
+        Reader readerWithMarkSupport = reader.markSupported() ? reader : new BufferedReader ( reader );
         this.reader = readerWithMarkSupport;
 
-        this.hasChar = true;
+        this.hasChar = false;
         this.currentChar = 0;
 
         this.resource = resource;
-        this.nextLineNumber = 1;
-        this.nextColumnNumber = 0;
-
-        advance ();
+        this.nextLineNumber = lineOffset == null ? 1 : lineOffset;
+        this.nextColumnNumber = columnOffset == null ? 0 : columnOffset - 1;
     }
 
-    @Deprecated // reader must be closed after reading
-    public CharReaderImpl ( @NotNull Path filePath ) throws IOException {
+    public static @NotNull CharReaderImpl createAndAdvance (
+        @NotNull Reader reader,
+        @Nullable TextResource resource,
+        @Nullable Integer lineOffset,
+        @Nullable Integer columnOffset ) throws IOException {
 
-        this ( TextFileIO.getUTF8FileReader ( filePath ), new File_TextResource ( filePath ) );
+        CharReaderImpl result = new CharReaderImpl ( reader, resource, lineOffset, columnOffset );
+        result.advance();
+        return result;
     }
 
-    @Deprecated // reader must be closed after reading
-    public CharReaderImpl ( @NotNull URL url ) throws IOException {
-
-        this ( URLUtilities.getUTF8URLReader ( url ), new URL_TextResource ( url ) );
-    }
-
-    /*
-    public DefaultCharReader ( @NotNull String string ) throws IOException {
-
-        // try {
-            this ( new StringReader ( string ), new String_TextResource ( string ) );
-        // } catch ( IOException e ) {
-        //    throw new RuntimeException ( e );
-        // }
-    }
-    */
-
-    public static CharReaderImpl createForString ( @NotNull String string, @Nullable TextResource resource ) {
-
-        try {
-            return new CharReaderImpl ( new StringReader ( string ), resource );
-        } catch ( IOException e ) {
-            // should never happen
-            throw new RuntimeException ( e );
-        }
-    }
-
-    public static CharReaderImpl createForString ( @NotNull String string ) {
-        return createForString ( string, null );
-    }
 
     public boolean hasChar () {
         return hasChar;
     }
-
-    // public char currentChar() { return currentChar; }
 
     public char currentChar () {
 
@@ -101,24 +67,12 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
         return currentChar;
     }
 
-/*
-    private boolean checkHasChar () {
-
-        if ( hasChar ) {
-            return true;
-        } else {
-            throw new NoSuchElementException (
-                "There are no more characters to read at position" + StringConstants.OS_NEW_LINE + currentLocation () );
-        }
-    }
-*/
-
 
     // advance
 
-    public void advance () throws IOException {
+    public boolean advance () throws IOException {
 
-        assert checkHasChar ();
+        // assert checkHasChar ();
 
         if ( currentChar == '\n' ) {
             nextLineNumber += 1;
@@ -127,13 +81,15 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
             nextColumnNumber += 1;
         }
 
-        int nextInt = reader.read ();
+        int nextInt = reader.read();
         if ( nextInt == -1 ) {
             hasChar = false;
             currentChar = 0;
+            return false;
         } else {
             hasChar = true;
             currentChar = (char) nextInt;
+            return true;
         }
     }
 
@@ -141,7 +97,6 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
     // location
 
     public @NotNull TextLocation currentLocation () {
-
         return new TextLocation ( resource, nextLineNumber, nextColumnNumber, null );
     }
 
@@ -328,7 +283,7 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
 
     public void setMark ( int readAheadLimit ) {
 
-        assert checkHasChar();
+        // assert checkHasChar();
 
         hasNextAtMark = hasChar;
         nextCharAtMark = currentChar;
@@ -452,6 +407,9 @@ public class CharReaderImpl extends AbstractCharReader implements CharReader {
     }
 
 */
+
+    @Override
+    public String toString() { return resource == null ? "CharReader" : resource.toString(); }
 
     // debugging
 

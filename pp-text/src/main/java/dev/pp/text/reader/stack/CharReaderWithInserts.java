@@ -16,8 +16,8 @@ public interface CharReaderWithInserts extends CharReader {
     @Deprecated // reader must be closed after reading
     void insert ( @NotNull Path path ) throws IOException;
 
-    @Deprecated // reader must be closed after reading
-    void insert ( @NotNull URL url ) throws IOException;
+    // @Deprecated // reader must be closed after reading
+    // void insert ( @NotNull URL url ) throws IOException;
 
     void insert ( @NotNull String string );
 }

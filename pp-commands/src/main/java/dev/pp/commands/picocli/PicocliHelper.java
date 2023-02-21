@@ -2,8 +2,8 @@ package dev.pp.commands.picocli;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.formalParameter.FormalParameters;
+import dev.pp.parameters.parameterspec.ParameterSpec;
+import dev.pp.parameters.parameterspecs.MutableOrImmutableParameterSpecs;
 import picocli.CommandLine;
 
 import java.util.HashMap;
@@ -13,14 +13,14 @@ public class PicocliHelper {
 
     public static @Nullable Map<String,String> parseResultToStringMap (
         @NotNull CommandLine.ParseResult parseResult,
-        @NotNull FormalParameters formalParameters ) {
+        @NotNull MutableOrImmutableParameterSpecs<?> parameterSpecs ) {
 
         Map<String,String> map = new HashMap<> ();
 
-        for ( FormalParameter<?> formalParameter : formalParameters.getAllSortedByIndex() ) {
-            @NotNull String name = formalParameter.getName();
+        for ( ParameterSpec<?> parameterSpec : parameterSpecs.listSortedByIndex () ) {
+            @NotNull String name = parameterSpec.getName();
 
-            @Nullable Integer positionalIndex = formalParameter.getPositionalParameterIndex();
+            @Nullable Integer positionalIndex = parameterSpec.getPositionalParameterIndex();
             if ( positionalIndex == null ) {
                 addOptionToStringMap ( name, parseResult, map );
             } else {
@@ -36,12 +36,10 @@ public class PicocliHelper {
         @NotNull CommandLine.ParseResult parseResult,
         @NotNull Map<String,String> map ) {
 
-        /*
-        String value = parseResult.matchedOptionValue ( optionName, null );
-        if ( value != null ) {
-            map.put ( optionName, value );
-        }
-        */
+        // String value = parseResult.matchedOptionValue ( optionName, null );
+        // if ( value != null ) {
+        //     map.put ( optionName, value );
+        // }
         if ( ! parseResult.hasMatchedOption ( optionName ) ) return;
 
         map.put ( optionName, parseResult.matchedOptionValue ( optionName, null ) );
@@ -53,12 +51,10 @@ public class PicocliHelper {
         @NotNull CommandLine.ParseResult parseResult,
         @NotNull Map<String,String> map ) {
 
-        /*
-        String value = parseResult.matchedPositionalValue ( position, null );
-        if ( value != null ) {
-            map.put ( parameterName, value );
-        }
-        */
+        // String value = parseResult.matchedPositionalValue ( position, null );
+        // if ( value != null ) {
+        //     map.put ( parameterName, value );
+        // }
 
         if ( ! parseResult.hasMatchedPositional ( position) ) return;
 

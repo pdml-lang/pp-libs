@@ -16,7 +16,9 @@ public interface CharReader {
     char currentChar();
 
     // advance
-    void advance() throws IOException;
+    // returns true if successfully advanced; false if eof
+    boolean advance() throws IOException;
+
     // char getCurrentAndAdvance() throws IOException;
     // char advanceAndGetCurrent() throws IOException;
     // ? @Nullable Character advanceIf ( @NotNull CharPredicate predicate ) throws IOException;
@@ -28,8 +30,8 @@ public interface CharReader {
     // location
     @NotNull TextLocation currentLocation();
     @Nullable TextResource resource();
-    int currentLineNumber ();
-    int currentColumnNumber ();
+    int currentLineNumber();
+    int currentColumnNumber();
 
     // consume
     void consumeCurrentChar ( @NotNull CharConsumer consumer ) throws IOException;
@@ -61,6 +63,8 @@ public interface CharReader {
     @Nullable String readWhileNotAtCharOrEnd ( char ch ) throws IOException;
     @Nullable String readWhileNotAtStringOrEnd ( @NotNull String string ) throws IOException;
     @Nullable String readMaxNChars ( long n ) throws IOException;
+    @Nullable String readLine ( boolean includeLineBreak ) throws IOException;
+    @Nullable String readLine() throws IOException;
     @Nullable String readRemaining() throws IOException;
 
     // isAt
@@ -71,6 +75,8 @@ public interface CharReader {
     // skip
     boolean skipIf ( @NotNull CharPredicate predicate ) throws IOException;
     boolean skipChar ( char c ) throws IOException;
+    boolean skipNewLine() throws IOException;
+    boolean skipNewLines() throws IOException;
     boolean skipString ( @NotNull String s ) throws IOException;
     boolean skipWhile ( @NotNull CharPredicate predicate ) throws IOException;
     void skipNChars ( long n ) throws IOException;

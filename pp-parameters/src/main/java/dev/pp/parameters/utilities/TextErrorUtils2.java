@@ -2,10 +2,10 @@ package dev.pp.parameters.utilities;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.parameters.formalParameter.FormalParameter;
-import dev.pp.parameters.parameter.Parameters;
-import dev.pp.text.error.TextError;
-import dev.pp.text.error.TextErrorUtils;
+import dev.pp.parameters.parameters.MutableOrImmutableParameters;
+import dev.pp.parameters.parameterspec.ParameterSpec;
+import dev.pp.text.inspection.message.TextError;
+import dev.pp.text.inspection.TextErrorUtils;
 
 import java.io.IOException;
 
@@ -13,13 +13,12 @@ public class TextErrorUtils2 {
 
     public static void showInEditor (
         @NotNull TextError error,
-        @NotNull Parameters parameters,
-        @NotNull FormalParameter<?> openFileOSCommandTemplateFormalParameter ) throws IOException {
+        @NotNull MutableOrImmutableParameters<?> parameters,
+        @NotNull ParameterSpec<?> openFileOSCommandTemplateParameterSpec ) throws IOException {
 
-        @Nullable String openFileOSCommandTemplate = parameters.getNullable (
-            openFileOSCommandTemplateFormalParameter );
-        if ( openFileOSCommandTemplate == null ) return;
+        @Nullable String template = parameters.castedValue ( openFileOSCommandTemplateParameterSpec );
+        if ( template == null ) return;
 
-        TextErrorUtils.showInEditor ( error, openFileOSCommandTemplate );
+        TextErrorUtils.showInEditor ( error, template );
     }
 }

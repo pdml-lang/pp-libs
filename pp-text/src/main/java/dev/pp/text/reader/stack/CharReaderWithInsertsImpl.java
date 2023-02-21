@@ -2,18 +2,21 @@ package dev.pp.text.reader.stack;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.character.CharConsumer;
 import dev.pp.basics.utilities.character.CharPredicate;
+import dev.pp.basics.utilities.file.TextFileIO;
 import dev.pp.text.reader.AbstractCharReader;
 import dev.pp.text.reader.CharReader;
 import dev.pp.text.reader.CharReaderImpl;
 import dev.pp.text.location.TextLocation;
+import dev.pp.text.resource.File_TextResource;
+import dev.pp.text.resource.String_TextResource;
 import dev.pp.text.resource.TextResource;
 import dev.pp.basics.utilities.string.StringConstants;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.Stack;
 
@@ -43,30 +46,39 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
         insert ( initialReader );
     }
 
-    public CharReaderWithInsertsImpl ( @NotNull Reader reader, @Nullable TextResource resource ) throws IOException {
+/*
+    private CharReaderWithInsertsImpl (
+        @NotNull TextResourceReader reader,
+        @Nullable Integer lineOffset,
+        @Nullable Integer columnOffset ) throws IOException {
 
-        this ( new CharReaderImpl ( reader, resource ) );
+        this ( new CharReaderImpl ( reader, null, lineOffset, columnOffset, false ) );
     }
 
-    /*
-    public CharReaderWithInsertsImpl ( @NotNull File file ) throws IOException {
+ */
 
-        this ( new CharReaderImpl ( file ) );
+    private CharReaderWithInsertsImpl (
+        @NotNull Reader reader,
+        @Nullable TextResource resource,
+        @Nullable Integer lineOffset,
+        @Nullable Integer columnOffset ) {
+
+        this ( new CharReaderImpl ( reader, resource, lineOffset, columnOffset ) );
     }
 
-    public CharReaderWithInsertsImpl ( @NotNull URL url ) throws IOException {
+    public static @NotNull CharReaderWithInsertsImpl createAndAdvance (
+        @NotNull Reader reader,
+        @Nullable TextResource resource,
+        @Nullable Integer lineOffset,
+        @Nullable Integer columnOffset ) throws IOException {
 
-        this ( new CharReaderImpl ( url ) );
+        CharReaderWithInsertsImpl result = new CharReaderWithInsertsImpl ( reader, resource, lineOffset, columnOffset );
+        result.advance();
+        return result;
     }
-    */
-
-    public CharReaderWithInsertsImpl ( @NotNull String string ) {
-
-        this ( CharReaderImpl.createForString ( string ) );
-    }
 
 
-    // push
+    // insert
 
     public void insert ( @NotNull CharReader reader ) {
 
@@ -76,17 +88,32 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
 
     public void insert ( @NotNull Path filePath ) throws IOException {
 
-        insert ( new CharReaderImpl ( filePath ) );
+        // TODO fileReader must be closed later
+        FileReader fileReader = TextFileIO.getUTF8FileReader ( filePath );
+//        CharReader charReader = new CharReaderImpl ( fileReader, new File_TextResource ( filePath ), null, null );
+        CharReader charReader = CharReaderImpl.createAndAdvance ( fileReader, new File_TextResource ( filePath ), null, null );
+        insert ( charReader );
     }
 
+/*
     public void insert ( @NotNull URL url ) throws IOException {
 
         insert ( new CharReaderImpl ( url ) );
     }
 
+ */
+
     public void insert ( @NotNull String string ) {
 
-        insert ( CharReaderImpl.createForString ( string ) );
+        // TODO stringReader must be closed later
+        StringReader stringReader = new StringReader ( string );
+        try {
+//            CharReader charReader = new CharReaderImpl ( stringReader, new String_TextResource ( string ), null, null );
+            CharReader charReader = CharReaderImpl.createAndAdvance ( stringReader, new String_TextResource ( string ), null, null );
+            insert ( charReader );
+        } catch ( IOException e ) {
+            throw new RuntimeException ( e );
+        }
     }
 
 
@@ -101,7 +128,7 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
 
     // advance
 
-    public void advance() throws IOException {
+    public boolean advance() throws IOException {
 
         currentReader.advance();
 
@@ -110,7 +137,7 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
             if ( currentReader.hasChar() ) {
 //                this.hasChar = true;
 //                this.currentChar = currentReader.currentChar();
-                return;
+                return true;
             }
 
             readers.pop();
@@ -118,7 +145,7 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
             if ( readers.empty() ) {
 //                this.hasChar = false;
 //                this.currentChar = 0;
-                return;
+                return false;
             }
 
             currentReader = readers.peek();
@@ -192,6 +219,10 @@ public class CharReaderWithInsertsImpl extends AbstractCharReader implements Cha
 
         return currentReader.peekCharAfterOptional ( predicate, lookAhead );
     }
+
+
+    @Override
+    public String toString() { return currentReader.toString(); }
 
 
     // debugging

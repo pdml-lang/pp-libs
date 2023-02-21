@@ -2,7 +2,7 @@ package dev.pp.parameters.utilities;
 
 import dev.pp.parameters.cli.CLIArguments;
 import dev.pp.parameters.cli.token.NameOrValueToken;
-import dev.pp.text.error.TextErrorException;
+import dev.pp.text.inspection.TextErrorException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

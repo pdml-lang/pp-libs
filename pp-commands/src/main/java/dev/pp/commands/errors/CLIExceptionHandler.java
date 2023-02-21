@@ -4,9 +4,8 @@ import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.utilities.ExceptionUtils;
 import dev.pp.basics.utilities.SimpleLogger;
 import dev.pp.basics.utilities.string.StringConstants;
-import dev.pp.text.error.TextErrorException;
-import dev.pp.texttable.writer.pretty.utilities.TextErrorOrWarning_FormWriter;
-
+import dev.pp.text.inspection.TextErrorException;
+import dev.pp.texttable.writer.pretty.utilities.TextInspectionMessage_FormWriter;
 import java.util.function.Function;
 
 public class CLIExceptionHandler {
@@ -30,7 +29,7 @@ public class CLIExceptionHandler {
 
         if ( throwable instanceof TextErrorException textErrorException ) {
             // use a form layout to display a more user-friendly error message in case of a text error
-            return TextErrorOrWarning_FormWriter.errorToString ( textErrorException.getTextError () );
+            return TextInspectionMessage_FormWriter.errorToString ( textErrorException.getTextError () );
         } else  {
             return null; // use default
         }

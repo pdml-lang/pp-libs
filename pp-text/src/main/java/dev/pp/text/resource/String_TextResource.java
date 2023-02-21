@@ -13,17 +13,15 @@ public class String_TextResource implements TextResource {
 
 
     public String_TextResource ( @NotNull String string ) {
-
         this.string = string;
     }
 
 
-    public @Nullable Object getResource() { return null; }
+    public @Nullable Object getResource() { return string; }
 
     public @NotNull String getName() { return "string"; }
 
     public @NotNull String getTextLine ( long lineNumber ) throws IOException {
-
         return TextLines.getNthLine ( string, lineNumber );
     }
 

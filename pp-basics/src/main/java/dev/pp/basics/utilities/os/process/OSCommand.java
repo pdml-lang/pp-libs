@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class OSCommand {
 
@@ -30,19 +31,38 @@ public class OSCommand {
 
     // runAndWait
 
-    public static int runAndWait ( @NotNull List<String> OSCommandTokens ) throws IOException, InterruptedException {
+    public static int runAndWait (
+        @NotNull List<String> commandTokens,
+        @Nullable Path workingDirectory,
+        @Nullable Map<String,String> extraEnvironment ) throws IOException, InterruptedException {
 
-        return runAndWait ( OSProcess.createProcess ( OSCommandTokens ) );
+        return runAndWait ( OSProcess.create ( commandTokens, workingDirectory, extraEnvironment ) );
     }
 
-    public static int runAndWait ( @NotNull String[] OSCommandTokens ) throws IOException, InterruptedException {
+    public static int runAndWait (
+        @NotNull List<String> commandTokens ) throws IOException, InterruptedException {
 
-        return runAndWait ( OSProcess.createProcess ( OSCommandTokens ) );
+        return runAndWait ( commandTokens, null, null );
     }
 
-    public static int runAndWait ( @NotNull String OSCommand ) throws IOException, InterruptedException {
+    public static int runAndWait (
+        @NotNull String[] commandTokens,
+        @Nullable Path workingDirectory,
+        @Nullable Map<String,String> extraEnvironment ) throws IOException, InterruptedException {
 
-        return runAndWait ( OSProcess.createProcess ( OSCommand ) );
+        return runAndWait ( OSProcess.create ( commandTokens, workingDirectory, extraEnvironment ) );
+    }
+
+    public static int runAndWait (
+        @NotNull String[] commandTokens ) throws IOException, InterruptedException {
+
+        return runAndWait ( commandTokens, null, null );
+    }
+
+    public static int runAndWait (
+        @NotNull String OSCommand ) throws IOException, InterruptedException {
+
+        return runAndWait ( OSProcess.create ( OSCommand ) );
     }
 
     private static int runAndWait ( @NotNull Process process ) throws InterruptedException {
@@ -56,17 +76,17 @@ public class OSCommand {
 
     public static @NotNull Process startAndContinue ( @NotNull List<String> OSCommandTokens ) throws IOException {
 
-        return startAndContinue ( OSProcess.createProcess ( OSCommandTokens ) );
+        return startAndContinue ( OSProcess.create ( OSCommandTokens ) );
     }
 
     public static @NotNull Process startAndContinue ( @NotNull String[] OSCommandTokens ) throws IOException {
 
-        return startAndContinue ( OSProcess.createProcess ( OSCommandTokens ) );
+        return startAndContinue ( OSProcess.create ( OSCommandTokens ) );
     }
 
     public static @NotNull Process startAndContinue ( @NotNull String OSCommand ) throws IOException {
 
-        return startAndContinue ( OSProcess.createProcess ( OSCommand ) );
+        return startAndContinue ( OSProcess.create ( OSCommand ) );
     }
 
     private static @NotNull Process startAndContinue ( @NotNull Process process ) {
@@ -77,10 +97,10 @@ public class OSCommand {
 
 
     public static @NotNull OSCommandResult runWithStrings (
-        @NotNull String[] OSCommandTokens,
+        @NotNull String[] commandTokens,
         @Nullable String input ) throws IOException, InterruptedException {
 
-        Process process = OSProcess.createProcess ( OSCommandTokens );
+        Process process = OSProcess.create ( commandTokens );
 
         if ( input != null ) {
             OSProcessRedirector.stdinFromString ( process, input, StandardCharsets.UTF_8 );
@@ -102,12 +122,12 @@ public class OSCommand {
     }
 
     public static int runWithFiles (
-        @NotNull String[] OSCommandTokens,
+        @NotNull String[] commandTokens,
         @Nullable Path inputFile,
         @Nullable Path outputFile,
         @Nullable Path errorFile ) throws IOException, InterruptedException {
 
-        Process process = OSProcess.createProcess ( OSCommandTokens );
+        Process process = OSProcess.create ( commandTokens );
 
         if ( inputFile != null ) {
             OSProcessRedirector.stdInFromFile ( process, inputFile, StandardCharsets.UTF_8 );
@@ -123,10 +143,10 @@ public class OSCommand {
     }
 
     public static @Nullable String textPipe (
-        @NotNull String[] OSCommandTokens,
+        @NotNull String[] commandTokens,
         @Nullable String input ) throws IOException, InterruptedException {
 
-        Process process = OSProcess.createProcess ( OSCommandTokens );
+        Process process = OSProcess.create ( commandTokens );
 
         if ( input != null ) {
             OSProcessRedirector.stdinFromString ( process, input, StandardCharsets.UTF_8 );
@@ -141,7 +161,7 @@ public class OSCommand {
 
         int result = process.waitFor();
         if ( result != 0 ) {
-            throw new IOException ( "Command '" + Arrays.toString ( OSCommandTokens ) + "' returned with error code " + result + ".");
+            throw new IOException ( "Command '" + Arrays.toString ( commandTokens ) + "' returned with error code " + result + ".");
         }
 
         // return sb.isEmpty() ? null : sb.toString();
@@ -159,6 +179,12 @@ public class OSCommand {
             System.arraycopy ( arguments, 0, result, 1, arguments.length );
             return result;
         }
+    }
+
+    public static @NotNull String[] commandAndArgsToArray ( @NotNull String command, @Nullable List<String> arguments ) {
+
+        String[] argumentsArray = arguments == null ? null : arguments.toArray ( new String[0] );
+        return commandAndArgsToArray ( command, argumentsArray );
     }
 
 

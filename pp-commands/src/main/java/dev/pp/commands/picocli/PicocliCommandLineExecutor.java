@@ -2,35 +2,34 @@ package dev.pp.commands.picocli;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.commands.command.FormalCommand;
-import dev.pp.commands.command.FormalCommands;
+import dev.pp.commands.command.CommandSpecs;
 import dev.pp.commands.errors.CLIExceptionHandler;
-import dev.pp.parameters.formalParameter.FormalParameters;
+import dev.pp.parameters.parameterspecs.ParameterSpecs;
 import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
-import picocli.CommandLine.Model.CommandSpec;
 
 import java.util.Map;
 
+// TODO Create a separate module for dev.pp.commands.picocli, to remove the Picocli dependency from projects that don't need it
 public class PicocliCommandLineExecutor {
 
     public static int executeCommand (
         @NotNull String[] CLIArgs,
         @NotNull String versionInfo,
-        @NotNull FormalCommands formalCommands ) {
+        @NotNull CommandSpecs<?,?> commandSpecs ) {
 
         try {
-            CommandSpec mainCommand = CommandSpec.create()
+            picocli.CommandLine.Model.CommandSpec picocliMainCommand = picocli.CommandLine.Model.CommandSpec.create()
                 .mixinStandardHelpOptions ( true )
                 .version ( versionInfo );
 
-            CommandLine commandLine = new CommandLine ( mainCommand )
+            CommandLine commandLine = new CommandLine ( picocliMainCommand )
                 .setSubcommandsCaseInsensitive ( true )
                 .setOptionsCaseInsensitive ( true )
                 .setCaseInsensitiveEnumValuesAllowed ( true );
 
-            for ( FormalCommand<?> formalCommand : formalCommands.getAll() ) {
-                commandLine.addSubcommand ( CommandToPicocliConverter.convert ( formalCommand ) );
+            for ( dev.pp.commands.command.CommandSpec<?,?> ppCommandSpec : commandSpecs.list () ) {
+                commandLine.addSubcommand ( CommandSpecToPicocliConverter.convert ( ppCommandSpec ) );
             }
 
             CommandLine.ParseResult parseResult = commandLine.parseArgs ( CLIArgs );
@@ -38,7 +37,7 @@ public class PicocliCommandLineExecutor {
             if ( ! parseResult.hasSubcommand() ) {
                 executeMainCommand ( parseResult );
             } else {
-                executeSubCommand ( parseResult, formalCommands );
+                executeSubCommand ( parseResult, commandSpecs );
             }
 
             return 0;
@@ -55,20 +54,20 @@ public class PicocliCommandLineExecutor {
         }
     }
 
-    private static void executeSubCommand ( ParseResult mainParseResult, @NotNull FormalCommands formalCommands ) throws Exception {
+    private static void executeSubCommand ( ParseResult mainParseResult, @NotNull CommandSpecs<?,?> commandSpecs ) throws Exception {
 
         ParseResult subParseResult = mainParseResult.subcommand();
-        CommandSpec commandSpec = subParseResult.commandSpec();
-        String commandName = commandSpec.name();
+        picocli.CommandLine.Model.CommandSpec picocliCommandSpec = subParseResult.commandSpec();
+        String commandName = picocliCommandSpec.name();
 
-        FormalCommand<?> formalCommand = formalCommands.get ( commandName );
-        FormalParameters formalParameters = formalCommand.getInputParameters();
+        dev.pp.commands.command.CommandSpec<?,?> ppCommandSpec = commandSpecs.get ( commandName );
+        ParameterSpecs<?> parameterSpecs = ppCommandSpec.getInputParameters();
 
         @Nullable Map<String, String> stringParams =
-            formalParameters != null
-            ? PicocliHelper.parseResultToStringMap ( subParseResult, formalParameters )
+            parameterSpecs != null
+            ? PicocliHelper.parseResultToStringMap ( subParseResult, parameterSpecs )
             : null;
 
-        formalCommand.execute ( stringParams );
+        ppCommandSpec.execute ( stringParams );
     }
 }

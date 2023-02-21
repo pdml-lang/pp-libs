@@ -1,15 +1,15 @@
 package dev.pp.datatype;
 
 import dev.pp.basics.annotations.NotNull;
-import dev.pp.datatype.nonUnion.collection.ListDataType;
-import dev.pp.datatype.nonUnion.collection.ListDataTypeImpl;
-import dev.pp.datatype.nonUnion.scalar.impls.Boolean.BooleanDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.filesystempath.DirectoryOrFilePathDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.filesystempath.DirectoryPathDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.filesystempath.FilePathDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.integer.Integer32DataType;
-import dev.pp.datatype.nonUnion.scalar.impls.regex.RegexDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.string.StringDataType;
+import dev.pp.datatype.nonunion.collection.ListDataType;
+import dev.pp.datatype.nonunion.collection.ListDataTypeImpl;
+import dev.pp.datatype.nonunion.scalar.impls.Boolean.BooleanDataType;
+import dev.pp.datatype.nonunion.scalar.impls.filesystempath.DirectoryOrFilePathDataType;
+import dev.pp.datatype.nonunion.scalar.impls.filesystempath.DirectoryPathDataType;
+import dev.pp.datatype.nonunion.scalar.impls.filesystempath.FilePathDataType;
+import dev.pp.datatype.nonunion.scalar.impls.integer.Integer32DataType;
+import dev.pp.datatype.nonunion.scalar.impls.regex.RegexDataType;
+import dev.pp.datatype.nonunion.scalar.impls.string.StringDataType;
 import dev.pp.datatype.union.NullablePairDataType;
 import dev.pp.text.documentation.SimpleDocumentation;
 

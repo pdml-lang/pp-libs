@@ -1,50 +1,54 @@
 package dev.pp.basics.utilities.os.process;
 
 import dev.pp.basics.annotations.NotNull;
+import dev.pp.basics.annotations.Nullable;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 public class OSProcess {
 
-    public static Process createProcess ( @NotNull List<String> OSCommandTokens ) throws IOException {
+    public static Process create (
+        @NotNull List<String> commandTokens,
+        @Nullable Path workingDirectory,
+        @Nullable Map<String,String> extraEnvironment ) throws IOException {
 
-        return createProcess ( OSCommandTokens.toArray ( new String[0] ) );
+        return create ( commandTokens.toArray ( new String[0] ), workingDirectory, extraEnvironment );
     }
 
-    public static Process createProcess ( @NotNull String[] OSCommandTokens ) throws IOException {
+    public static Process create ( @NotNull List<String> commandTokens ) throws IOException {
 
-        return new ProcessBuilder ( OSCommandTokens ).start();
+        return create ( commandTokens, null, null );
     }
 
-    public static Process createProcess ( @NotNull String OSCommand ) throws IOException {
+    public static Process create (
+        @NotNull String[] commandTokens,
+        @Nullable Path workingDirectory,
+        @Nullable Map<String,String> extraEnvironment ) throws IOException {
+
+        ProcessBuilder builder = new ProcessBuilder( commandTokens );
+
+        if ( workingDirectory != null ) {
+            builder.directory ( workingDirectory.toFile() );
+        }
+
+        if ( extraEnvironment != null ) {
+            builder.environment().putAll ( extraEnvironment );
+        }
+
+        return builder.start();
+    }
+
+    public static Process create ( @NotNull String[] commandTokens ) throws IOException {
+
+        return create ( commandTokens, null, null );
+    }
+
+    public static Process create ( @NotNull String OSCommand ) throws IOException {
 
         // return new ProcessBuilder ( OSCommandAndArgs ).start();
         return Runtime.getRuntime().exec ( OSCommand );
     }
-
-/*
-    public static Process createProcess ( @NotNull String command, @Nullable List<String> arguments ) throws IOException {
-
-        return createProcess ( command, arguments == null ? null : arguments.toArray ( new String[0] ) );
-    }
-
-    public static Process createProcess ( @NotNull String command, @Nullable String[] arguments ) throws IOException {
-
-        return createProcess ( commandAndArgsToArray ( command, arguments ) );
-    }
-
-
-    private static @NotNull String[] commandAndArgsToArray ( @NotNull String command, @Nullable String[] arguments ) {
-
-        if ( arguments == null ) {
-            return new String[]{command};
-        } else {
-            String[] result = new String[arguments.length + 1];
-            result[0] = command;
-            System.arraycopy ( arguments, 0, result, 1, arguments.length );
-            return result;
-        }
-    }
-*/
 }

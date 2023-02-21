@@ -2,14 +2,13 @@ package dev.pp.datatype.union;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.DebugUtils;
-import dev.pp.datatype.nonUnion.NonUnionDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.Null.NullDataType;
+import dev.pp.datatype.nonunion.NonUnionDataType;
+import dev.pp.datatype.nonunion.scalar.impls.Null.NullDataType;
 import dev.pp.datatype.utils.parser.DataParserException;
 import dev.pp.datatype.utils.validator.DataValidator;
 import dev.pp.datatype.utils.validator.DataValidatorException;
 import dev.pp.text.documentation.SimpleDocumentation;
-import dev.pp.text.token.TextToken;
+import dev.pp.text.location.TextLocation;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -36,15 +35,17 @@ public class NullablePairDataType<T> extends UnionDataTypeImpl<T> {
     }
 
 
-    public @Nullable T parse ( @Nullable String string, @Nullable TextToken token ) throws DataParserException {
+    public @Nullable T parse (
+        @Nullable String string,
+        @Nullable TextLocation location ) throws DataParserException {
 
         if ( NullDataType.isNullString ( string ) ) {
             return null;
         } else {
             try {
-                return nonNullMember.parseAndValidate ( string, token );
+                return nonNullMember.parseAndValidate ( string, location );
             } catch ( DataValidatorException e ) {
-                throw new DataParserException ( e, token );
+                throw new DataParserException ( e, string, location );
             }
         }
     }

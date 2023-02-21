@@ -25,12 +25,20 @@ public class BindingsBuilder {
     }
 
 
+    public boolean hasBinding ( @NotNull String name ) {
+        return result.containsKey ( name );
+    }
+
     public BindingsBuilder add ( @NotNull ScriptingBinding binding ) {
         add ( binding.bindingName (), binding );
         return this;
     }
 
     public BindingsBuilder add ( @NotNull String name, @NotNull Object object ) {
+
+        if ( hasBinding ( name ) )
+            throw new RuntimeException ( "Bindings with name '" + name + "' exists already." );
+
         result.put ( name, object );
         return this;
     }

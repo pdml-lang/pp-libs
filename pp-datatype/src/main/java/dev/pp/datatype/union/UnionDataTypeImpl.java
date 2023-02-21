@@ -3,13 +3,13 @@ package dev.pp.datatype.union;
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
 import dev.pp.datatype.DataType;
-import dev.pp.datatype.nonUnion.NonUnionDataType;
-import dev.pp.datatype.nonUnion.scalar.impls.Null.NullDataType;
+import dev.pp.datatype.nonunion.NonUnionDataType;
+import dev.pp.datatype.nonunion.scalar.impls.Null.NullDataType;
 import dev.pp.datatype.utils.parser.DataParserException;
 import dev.pp.datatype.utils.validator.DataValidator;
 import dev.pp.datatype.utils.validator.DataValidatorException;
 import dev.pp.text.documentation.SimpleDocumentation;
-import dev.pp.text.token.TextToken;
+import dev.pp.text.location.TextLocation;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -74,16 +74,18 @@ public class UnionDataTypeImpl<T> implements UnionDataType<T> {
     }
 
 
-    public @Nullable T parse ( @Nullable String string, @Nullable TextToken token ) throws DataParserException {
+    public @Nullable T parse (
+        @Nullable String string,
+        @Nullable TextLocation location ) throws DataParserException {
 
         if ( NullDataType.isNullString ( string ) ) {
             if ( isNullable() ) {
                 return null;
             } else {
                 throw new DataParserException (
-                    "NULL_NOT_ALLOWED",
                     "'null' is not allowed for type '" + getName () + "'.",
-                    token );
+                    "NULL_NOT_ALLOWED",
+                    string, location );
             }
         }
 
@@ -91,26 +93,26 @@ public class UnionDataTypeImpl<T> implements UnionDataType<T> {
         int separatorIndex = string.indexOf ( separatorChar );
         if ( separatorIndex == -1 || separatorIndex == 0 || separatorIndex == string.length() - 1 )
             throw new DataParserException (
-                "INVALID_UNION_TYPE",
                 "Invalid format for union type. A value for union type '" + getName() +
                     "' must have the format 'type" + separatorChar + "value'.",
-                token );
+                "INVALID_UNION_TYPE",
+                string, location );
 
         String typeName = string.substring ( 0, separatorIndex );
         if ( ! hasMember ( typeName ) ) throw new DataParserException (
-            "INVALID_UNION_TYPE",
             "Type '" + typeName + "' is not a member of union type '" + getName() + "'.",
-            token );
+            "INVALID_UNION_TYPE",
+            string, location );
         NonUnionDataType<?> type = requireMember ( typeName );
 
         String value = string.substring ( separatorIndex + 1 );
         // T result =  (T) type.parseWithoutValidating ( value, token );
         try {
             @SuppressWarnings ("unchecked")
-            T result = (T) type.parseAndValidate ( value, token );
+            T result = (T) type.parseAndValidate ( value, location );
             return result;
         } catch ( DataValidatorException e ) {
-            throw new DataParserException ( e, token );
+            throw new DataParserException ( e, string, location );
         }
     }
 

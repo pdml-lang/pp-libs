@@ -2,26 +2,16 @@ package dev.pp.text.reader;
 
 import dev.pp.basics.annotations.NotNull;
 import dev.pp.basics.annotations.Nullable;
-import dev.pp.basics.utilities.URLUtilities;
+import dev.pp.basics.utilities.character.CharChecks;
+import dev.pp.basics.utilities.character.CharConstants;
 import dev.pp.basics.utilities.character.CharConsumer;
 import dev.pp.basics.utilities.character.CharPredicate;
-import dev.pp.basics.utilities.file.TextFileIO;
-import dev.pp.basics.utilities.string.StringConstants;
-import dev.pp.text.location.TextLocation;
-import dev.pp.text.resource.File_TextResource;
-import dev.pp.text.resource.TextResource;
-import dev.pp.text.resource.URL_TextResource;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.NoSuchElementException;
 
 public abstract class AbstractCharReader implements CharReader {
 
+/*
     protected boolean checkHasChar() {
 
         if ( hasChar() ) {
@@ -31,6 +21,7 @@ public abstract class AbstractCharReader implements CharReader {
                 "There are no more characters to read at position" + StringConstants.OS_NEW_LINE + currentLocation () );
         }
     }
+ */
 
     public @Nullable String advanceWhile ( @NotNull CharPredicate predicate ) throws IOException {
 
@@ -94,6 +85,8 @@ public abstract class AbstractCharReader implements CharReader {
             if ( ! hasChar() || isAtString ( string ) ) {
                 return charFound;
             }
+            consumer.consume ( currentChar() );
+            advance();
         }
     }
 
@@ -186,6 +179,31 @@ public abstract class AbstractCharReader implements CharReader {
         return sb.length() == 0 ? null : sb.toString();
     }
 
+    public @Nullable String readLine ( boolean includeLineBreak ) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+        appendWhile ( CharChecks::isNotNewLine, sb );
+        if ( includeLineBreak ) {
+            if ( skipChar ( CharConstants.WINDOWS_NEW_LINE_START ) ) {
+                sb.append ( CharConstants.WINDOWS_NEW_LINE_START );
+            }
+            if ( skipChar ( CharConstants.UNIX_NEW_LINE ) ) {
+                sb.append ( CharConstants.UNIX_NEW_LINE );
+            }
+        } else {
+            skipNewLine();
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    public @Nullable String readLine() throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+        appendWhile ( CharChecks::isNotNewLine, sb );
+        skipNewLine();
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
     public @Nullable String readRemaining() throws IOException {
 
         StringBuilder sb = new StringBuilder();
@@ -232,6 +250,29 @@ public abstract class AbstractCharReader implements CharReader {
         }
     }
 
+    public boolean skipNewLines() throws IOException {
+
+        boolean skipped = isAtChar ( CharConstants.UNIX_NEW_LINE ) || isAtChar ( CharConstants.WINDOWS_NEW_LINE_START );
+        while ( skipNewLine() ) {}
+        return skipped;
+    }
+
+    public boolean skipNewLine() throws IOException {
+
+        if ( isAtChar ( CharConstants.UNIX_NEW_LINE ) ) {
+            advance();
+            return true;
+
+        } else if ( isAtChar ( CharConstants.WINDOWS_NEW_LINE_START ) ) {
+            advance();
+            assert currentChar() == CharConstants.WINDOWS_NEW_LINE_END;
+            advance();
+            return true;
+
+        } else {
+            return false;
+        }
+    }
     public boolean skipString ( @NotNull String string ) throws IOException {
 
         // assert checkHasChar();
